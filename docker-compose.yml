@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  blog-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports: 
+      - "3000:3000"
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./blog.db:/usr/src/app/blog.db
+    environment:
+      - NODE_ENV=development
+
+
