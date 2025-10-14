@@ -1,6 +1,9 @@
 version: "3.9"
 
 services:
+  # -----------------------------
+  # Development service
+  # -----------------------------
   api:
     build:
       context: .
@@ -14,7 +17,11 @@ services:
       - ./src:/usr/src/app/src
       - ./tests:/usr/src/app/tests
     command: npm run dev
+    profiles: ["dev"]
 
+  # -----------------------------
+  # Test service
+  # -----------------------------
   test:
     build:
       context: .
@@ -23,3 +30,19 @@ services:
     environment:
       - NODE_ENV=test
     command: npm test
+    profiles: ["test"]
+
+  # -----------------------------
+  # Production service
+  # -----------------------------
+  prod:
+    build:
+      context: .
+      target: prod
+    container_name: blog-api-prod
+    ports:
+      - "8080:3000"
+    environment:
+      - NODE_ENV=production
+    command: npm start
+    profiles: ["prod"]
