@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import postsRouter from "./posts.js";
+import categoriesRouter from "./categories.js";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 // Routes
 app.get("/", (_req, res) => res.send("📝 Blog API Running"));
 app.use("/posts", postsRouter);
+app.use("/categories", categoriesRouter);
 
 // 404 handler
 app.use((_req, res) => res.status(404).json({ error: "Not found" }));
