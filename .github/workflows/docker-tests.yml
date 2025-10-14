@@ -25,13 +25,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build Docker image (with dev deps for tests)
-        run: |
-          docker build -f Dockerfile.dev -t blog-api-test .
+      - name: Build dev image for tests
+        run: docker build --target dev -t blog-api-test .
 
-      - name: Run tests inside container
-        run: |
-          docker run --rm \
-            -e NODE_ENV=test \
-            blog-api-test \
-            npm test
+      - name: Run tests inside dev image
+        run: docker run --rm -e NODE_ENV=test blog-api-test npm test
+
+      - name: Build production image (post-tests)
+        run: docker build --target prod -t blog-api:latest .

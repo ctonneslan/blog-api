@@ -1,7 +1,9 @@
 node_modules
-npm-debug.log
 .git
 .gitignore
+npm-debug.log
+Dockerfile.dev
 README.md
+.env
 *.sqlite
 blog.db

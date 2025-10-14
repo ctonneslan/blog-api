@@ -1,20 +1,33 @@
-# ---------- Base image ----------
-FROM node:20-alpine
+# -------------------------------
+# Stage 1: Development / Test
+# -------------------------------
+FROM node:20-alpine AS dev
 
-# ---------- Working directory ----------
 WORKDIR /usr/src/app
 
-# ---------- Copy package files first (better layer caching) ----------
 COPY package*.json ./
+RUN npm install
 
-# ---------- Install dependencies ----------
-RUN npm ci --omit=dev
+COPY . .
 
-# ---------- Copy application code ----------
-COPY src ./src
-
-# ---------- Expose port ----------
+# Expose for local dev
 EXPOSE 3000
 
-# ---------- Start command ----------
-CMD ["node", "src/server.js"]
+CMD ["npm", "run", "dev"]
+
+# -------------------------------
+# Stage 2: Production
+# -------------------------------
+FROM node:20-alpine AS prod
+
+WORKDIR /usr/src/app
+
+# Copy only what's needed for runtime
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Copy compiled app (no tests, no dev files)
+COPY src ./src
+
+EXPOSE 3000
+CMD ["npm", "start"]
