@@ -1,16 +1,25 @@
 version: "3.9"
 
 services:
-  blog-api:
+  api:
     build:
       context: .
-      dockerfile: Dockerfile.dev
-    ports: 
+      target: dev
+    container_name: blog-api
+    ports:
       - "3000:3000"
-    volumes:
-      - ./src:/usr/src/app/src
-      - ./blog.db:/usr/src/app/blog.db
     environment:
       - NODE_ENV=development
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./tests:/usr/src/app/tests
+    command: npm run dev
 
-
+  test:
+    build:
+      context: .
+      target: dev
+    container_name: blog-api-test
+    environment:
+      - NODE_ENV=test
+    command: npm test
