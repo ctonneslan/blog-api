@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 
-const db = new Database("blog.db");
+const dbFile = process.env.NODE_ENV === "test" ? ":memory:" : "blog.db";
+const db = new Database(dbFile);
 
 db.prepare(
   `

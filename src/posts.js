@@ -63,22 +63,28 @@ router.get("/:id", (req, res) => {
 
 // Update
 router.put("/:id", (req, res) => {
+  const { id } = req.params;
   const { title, content, category, tags } = req.body;
-  const now = new Date().toISOString();
 
-  const result = db
-    .prepare(
-      `
-    UPDATE posts 
-    SET title = ?, content = ?, category = ?, tags = ?, updatedAt = ?
-    WHERE id = ?
-    RETURNING *
-    `
-    )
-    .run(title, content, category, serializeTags(tags), now, req.params.id);
+  const updatedAt = new Date().toISOString();
 
-  if (!result) return res.status(404).json({ error: "Post not found" });
-  res.json({ ...result, tags: deserializeTags(result.tags) });
+  try {
+    const updated = db
+      .prepare(
+        `UPDATE posts
+         SET title = ?, content = ?, category = ?, tags = ?, updatedAt = ?
+         WHERE id = ?
+         RETURNING *`
+      )
+      .get(title, content, category, serializeTags(tags), updatedAt, id);
+
+    if (!updated) return res.status(404).json({ error: "Post not found" });
+
+    res.status(200).json({ ...updated, tags: deserializeTags(updated.tags) });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update post" });
+  }
 });
 
 // Delete
